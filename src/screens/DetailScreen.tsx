@@ -1,15 +1,13 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetOneCharacter } from '../hooks/useGetOneCharacter';
+import { useAppSelector } from '../app/hooks';
+import { selectCast } from '../features/characters/castSlice';
 
 export const DetailScreen = () => {
 
   const { id } = useParams();
-  const { data: character, isLoading } = useGetOneCharacter(id!);
+  const { characters } = useAppSelector(selectCast);
   const navigate = useNavigate();
-
-  if (isLoading) {
-    return (<h2>loading...</h2>)
-  }
+  const character = characters.find(i => i.char_id == Number(id));
 
   return (
     <div>

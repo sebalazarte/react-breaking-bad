@@ -1,16 +1,20 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { ListCharters } from '../components/ListCharters';
-import { useGetCharters } from '../hooks/useGetCharters';
+import { selectCast, getAllCastAsync, filter } from '../features/characters/castSlice';
 
 export const HomeScreen = () => {
 
-  const [searchText, setSearchText] = useState<string>('');
+  const { filtered, isLoading } = useAppSelector(selectCast);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getAllCastAsync());
+  }, [])
 
   const handlerOnchange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+    dispatch(filter(event.target.value));
   }
-
-  const { data, isLoading } = useGetCharters(searchText);
 
   {
     isLoading && (<span>loading...</span>);
@@ -19,7 +23,7 @@ export const HomeScreen = () => {
   return (
     <div>
       <input type='text' placeholder='name...' className='form-control mb-4' onChange={handlerOnchange} />
-      <ListCharters characters={data} />
+      <ListCharters characters={filtered} />
     </div>
 
   )
